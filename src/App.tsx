@@ -51,7 +51,7 @@ const sampleSessions: SessionData[] = [
     failed_login_attempts_last_24h: 0,
     is_vpn_detected: 0,
     recent_device_change: 1,
-    risk_level: "medium",
+    risk_level: "high",
     timestamp: "2025-08-04T21:10:00Z"
   }
 ];
