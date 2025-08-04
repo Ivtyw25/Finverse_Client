@@ -79,7 +79,7 @@ export default function MobileRechargePage() {
       
       const result = await response.json();
       const prediction = result?.results?.[0];
-      const riskResult = prediction?.risk_level;
+
 
       if (prediction?.risk_level === "High") {
         setShowDialog(true);

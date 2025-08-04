@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import LoginPage from './components/LoginPage';
 import Dashboard from './components/Dashboard';
+import type { SessionData } from './types/index';
 import Header from './components/Header';
 import TransferPage from './components/TransferPage';
 import "./index.css"
