@@ -4,19 +4,15 @@ import { useAuth } from '../context/AuthContext';
 import { useTypingSpeed } from '../context/TypingSpeedContext';
 import { useMouseSpeed } from '../context/MouseActivityContext';
 
-
-type TransferFormData = {
-  bank: string;
-  accountNumber: string;
-  accountType: string;
+type RechargeFormData = {
+  operator: string;
+  phoneNumber: string;
   amount: string;
-  reference: string;
-  description: string;
 };
 
-export default function TransferPage() {
+export default function MobileRechargePage() {
   const navigate = useNavigate();
-  const{ endSession,loginDay, session_seconds, resetNavPath, navPath, navPathDepth} = useAuth();
+  const { endSession, loginDay, session_seconds, navPathDepth, navPath, resetNavPath } = useAuth();
   const { recordKeystroke, startTracking, stopTracking, averageCPM } = useTypingSpeed();
   const { averageSpeed } = useMouseSpeed();
   const [showDialog, setShowDialog] = useState(false);
@@ -26,17 +22,14 @@ export default function TransferPage() {
     return () => stopTracking(); // Stop when component unmounts
   }, []);
 
-  const [form, setForm] = useState<TransferFormData>({
-    bank: '',
-    accountNumber: '',
-    accountType: '',
+  const [form, setForm] = useState<RechargeFormData>({
+    operator: '',
+    phoneNumber: '',
     amount: '',
-    reference: '',
-    description: '',
   });
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setForm((prev) => ({
@@ -48,8 +41,8 @@ export default function TransferPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const dataPrediction = {
-      // user_id: "user123",
-      // device_os: "Windows",
+      user_id: "user123", // These are placeholders, you'll need to fetch real data
+      device_os: "Windows",
       login_hour: 2110,
       typing_speed_cpm: averageCPM,
       nav_path: navPath,
@@ -65,105 +58,97 @@ export default function TransferPage() {
       failed_login_attempts_last_24h: 0,
       is_vpn_detected: 0,
       recent_device_change: 1
-    }
-    endSession()
-    stopTracking()
-    resetNavPath()
-    console.log(dataPrediction)
+    };
+    
+    console.log(session_seconds);
+    resetNavPath();
+    endSession();
+    stopTracking();
+    console.log(dataPrediction);
+
     try {
       const response = await fetch("http://127.0.0.1:8000/predict", {
         method: "POST",
         headers: {
-          "Content-Type":"application/json"
+          "Content-Type": "application/json"
         },
-       body: JSON.stringify({
-        sessions: [dataPrediction]
-       })
-      }) 
+        body: JSON.stringify({
+          sessions: [dataPrediction]
+        })
+      });
+      
       const result = await response.json();
       const prediction = result?.results?.[0];
-      console.log(result.results)
+      const riskResult = prediction?.risk_level;
 
       if (prediction?.risk_level === "High") {
         setShowDialog(true);
       }
+      
       const emailData = {
         email_to: "Ivantham1990@gmail.com",
-        subject: "Urgent: Suspicios Activity Secure Bank Online Banking",
-        message: "We've detected unusual activity on your account that may indicate a security risk. Please verify if it is you"
-
-      }
-      const emailResponse = await fetch("http://127.0.0.1:8000/send-email",{
+        subject: "Urgent: Suspicious Activity Detected on Your Account",
+        message: "We've detected unusual activity on your account that may indicate a security risk. Please verify if it is you."
+      };
+      
+      const emailResponse = await fetch("http://127.0.0.1:8000/send-email", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
         body: JSON.stringify(emailData)
-      })
+      });
+      
       const emailResult = await emailResponse.json();
-      if (emailResult)
-        console.log("succssfully send")
-    }catch (err){
-      console.log(err)
+      if (emailResult) {
+        console.log("Email sent successfully");
+      }
+    } catch (err) {
+      console.log(err);
     }
   };
 
   return (
     <div className="max-w-2xl mx-auto p-6 bg-white rounded-xl shadow border mt-8">
-      <h1 className="text-2xl font-semibold mb-6">Transfer Funds</h1>
+      <h1 className="text-2xl font-semibold mb-6">Mobile Recharge</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-
-        {/* Recipient Bank */}
+        {/* Mobile Operator */}
         <div>
-          <label className="block text-slate-700 font-medium mb-1">Recipient Bank</label>
+          <label className="block text-slate-700 font-medium mb-1">Mobile Operator</label>
           <select
-            name="bank"
-            value={form.bank}
+            name="operator"
+            value={form.operator}
             onChange={handleChange}
             required
             className="w-full p-2 border rounded"
           >
-            <option value="">Select bank</option>
-            <option value="Maybank">Maybank</option>
-            <option value="CIMB">CIMB</option>
-            <option value="Public Bank">Public Bank</option>
+            <option value="">Select operator</option>
+            <option value="Celcom">Celcom</option>
+            <option value="Maxis">Maxis</option>
+            <option value="Digi">Digi</option>
+            <option value="U Mobile">U Mobile</option>
           </select>
         </div>
 
-        {/* Account Number */}
+        {/* Phone Number */}
         <div>
-          <label className="block text-slate-700 font-medium mb-1">Recipient Account Number</label>
+          <label className="block text-slate-700 font-medium mb-1">Phone Number</label>
           <input
-            name="accountNumber"
+            type="tel"
+            name="phoneNumber"
             onKeyDown={recordKeystroke}
-            value={form.accountNumber}
+            value={form.phoneNumber}
             onChange={handleChange}
             required
             className="w-full p-2 border rounded"
-            placeholder="e.g. 1234567890"
+            placeholder="e.g. 0123456789"
           />
         </div>
 
-        {/* Account Type */}
+        {/* Recharge Amount */}
         <div>
-          <label className="block text-slate-700 font-medium mb-1">Account Type</label>
-          <select
-            name="accountType"
-            value={form.accountType}
-            onChange={handleChange}
-            required
-            className="w-full p-2 border rounded"
-          >
-            <option value="">Select account type</option>
-            <option value="savings">Savings</option>
-            <option value="checking">Checking</option>
-          </select>
-        </div>
-
-        {/* Amount */}
-        <div>
-          <label className="block text-slate-700 font-medium mb-1">Amount</label>
+          <label className="block text-slate-700 font-medium mb-1">Recharge Amount</label>
           <input
             type="number"
             name="amount"
@@ -171,40 +156,10 @@ export default function TransferPage() {
             value={form.amount}
             onChange={handleChange}
             required
-            min={0.01}
-            step={0.01}
+            min={1}
+            step={1}
             className="w-full p-2 border rounded"
-            placeholder="e.g. 100.00"
-          />
-        </div>
-
-        {/* Recipient Reference */}
-        <div>
-          <label className="block text-slate-700 font-medium mb-1">Recipient Reference</label>
-          <select
-            name="reference"
-            value={form.reference}
-            onChange={handleChange}
-            required
-            className="w-full p-2 border rounded"
-          >
-            <option value="">Select reference</option>
-            <option value="friend">Friend</option>
-            <option value="family">Family</option>
-            <option value="utility">Utility</option>
-          </select>
-        </div>
-
-        {/* Description */}
-        <div>
-          <label className="block text-slate-700 font-medium mb-1">Description</label>
-          <textarea
-            name="description"
-            value={form.description}
-            onKeyDown={recordKeystroke}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            placeholder="Optional description"
+            placeholder="e.g. 50"
           />
         </div>
 
@@ -221,7 +176,7 @@ export default function TransferPage() {
             type="submit"
             className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
           >
-            Submit Transfer
+            Recharge
           </button>
           {showDialog && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -237,7 +192,6 @@ export default function TransferPage() {
               </div>
             </div>
           )}
-
         </div>
       </form>
     </div>

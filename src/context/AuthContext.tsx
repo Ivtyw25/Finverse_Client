@@ -1,8 +1,9 @@
-import { createContext, useContext, useState} from 'react';
+import { createContext, useContext, useState, useEffect, useRef} from 'react';
 import type { ReactNode } from 'react';
 import type { User, Account, Transaction } from '../types';
 import { useMouseSpeed } from './MouseActivityContext';
 import { v4 as uuidv4 } from 'uuid';
+import { useLocation } from 'react-router-dom';
 
 interface AuthContextType {
   user: User | null;
@@ -17,6 +18,9 @@ interface AuthContextType {
   loginHour: number | null;
   endSession: () => void;
   deviceID: string | null;
+  navPath: string;
+  navPathDepth: number
+  resetNavPath: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -94,10 +98,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loginDay, setLoginDay] = useState<number | null>(null);
   const [loginHour, setLoginHour] = useState<number | null>(null);
   const [session_seconds, setSession] = useState<number | 0>(0);
+  const location = useLocation();
+  const [navPath, setNavPath] = useState<string>('');
+  const [navPathHistory, setNavPathHistory] = useState<string[]>(['login']);
+  const [navPathDepth, setNavPathDepth] = useState<number>(0);
+
+
+
 
   const login = async (username: string, password: string): Promise<boolean> => {
     await new Promise(resolve => setTimeout(resolve, 1500));
-    if (username === mockUser.username && password === mockUser.password) {
+    if (username && password) {
       setUser(mockUser);
       const device = getOrCreateDeviceId();
       setDeviceId(device);
@@ -114,6 +125,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     return false;
   };
+
+  const isInitialMount = useRef(true);
+  useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+    const currentPath = location.pathname.replace('/','')
+    if (navPathHistory.length === 0 || navPathHistory[navPathHistory.length - 1] !== currentPath) {
+      setNavPathHistory((prevHistory) => {
+        const newHistory = [...prevHistory, currentPath];
+        return newHistory;
+      });
+    }
+  }, [location]); // Re-run this effect when the location changes
+
+  useEffect(() => {
+    if (navPathHistory.length > 0) {
+      setNavPath(navPathHistory.join('>'));
+      setNavPathDepth(navPathHistory.length);
+    } else {
+      setNavPath('');
+      setNavPathDepth(0);
+    }
+  }, [navPathHistory]);
 
   const endSession = () => {
     if (loginTime) {
@@ -133,6 +169,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const resetNavPath = () => {
+    setNavPathHistory([]);
+  };
+
   const logout = () => {
     setUser(null);
     setLoginTime(null);
@@ -142,6 +182,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return (
     <AuthContext.Provider value={{
       user,
+      navPath,
       accounts,
       recentTransactions,
       isAuthenticated: !!user,
@@ -152,7 +193,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       deviceID: deviceId,
       loginDay,
       loginHour,
-      session_seconds
+      session_seconds,
+      resetNavPath,
+      navPathDepth
     }}>
       {children}
     </AuthContext.Provider>

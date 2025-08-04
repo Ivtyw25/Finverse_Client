@@ -55,3 +55,30 @@ export const bankOptions: BankOption[] = [
   { label: 'AM Bank', value: 'am bank' },
   { label: 'Standard Chartered Bank', value: 'standard chatered bank' },
 ];
+
+export interface SessionData {
+  user_id: string;
+  device_os: string;
+  login_hour: number;
+  typing_speed_cpm: number;
+  nav_path: string;
+  nav_path_depth: number;
+  ip_country: string;
+  session_duration_sec: number;
+  mouse_movement_rate: number;
+  device_id: string;
+  ip_consistency_score: number;
+  login_day_of_week: number;
+  geo_distance_from_usual: number;
+  browser_language: string;
+  failed_login_attempts_last_24h: number;
+  is_vpn_detected: number;
+  recent_device_change: number;
+  risk_level: 'high' | 'medium' | 'low';
+  timestamp?: string;
+}
+
+export interface DashboardProps {
+  sessions: SessionData[];
+  title?: string;
+}

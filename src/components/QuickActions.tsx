@@ -10,6 +10,8 @@ export default function QuickActions({ actions }: QuickActionsProps) {
   const handleActionClick = (action: string) => {
     if (action === "transfer") {
         navigate('/transfer')
+    } else if (action === "recharge") {
+      navigate('/recharge')
     }
     console.log(`Navigate to ${action}`);
   };

@@ -1,8 +1,11 @@
-import { Bell, Settings, LogOut } from 'lucide-react';
+import { Bell, Settings, LogOut, LayoutDashboard } from 'lucide-react'; // ← ADD this
 import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router';
+
 
 export default function Header() {
   const { logout } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <div className="bg-white border-b border-slate-200 px-6 py-4">
@@ -19,7 +22,12 @@ export default function Header() {
               2
             </span>
           </button>
-          
+
+          {/* 🚀 Dashboard Icon */}
+          <button onClick={()=> navigate("/Logs")} className="p-2 rounded-full hover:bg-slate-100 transition-colors">
+            <LayoutDashboard className="h-5 w-5 text-slate-600" />
+          </button>
+
           <button className="p-2 rounded-full hover:bg-slate-100 transition-colors">
             <Settings className="h-5 w-5 text-slate-600" />
           </button>
