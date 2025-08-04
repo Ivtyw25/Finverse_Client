@@ -97,7 +97,7 @@ export default function LoginForm() {
         {/* username Field */}
         <div className="space-y-2">
           <label htmlFor="username" className="block text-sm font-semibold text-slate-700">
-            Username
+            Username (ivtyw127)
           </label>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -137,7 +137,7 @@ export default function LoginForm() {
         {/* Password Field */}
         <div className="space-y-2">
           <label htmlFor="password" className="block text-sm font-semibold text-slate-700">
-            Password
+            Password (ivtyw127)
           </label>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
