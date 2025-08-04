@@ -1,4 +1,3 @@
-import React from 'react';
 import LoginForm from './LoginForm';
 import SecurityBadges from './SecurityBadges';
 import { Building2, Shield } from 'lucide-react';

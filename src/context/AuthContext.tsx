@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState} from 'react';
+import type { ReactNode } from 'react';
 import type { User, Account, Transaction } from '../types';
 import { useMouseSpeed } from './MouseActivityContext';
 import { v4 as uuidv4 } from 'uuid';

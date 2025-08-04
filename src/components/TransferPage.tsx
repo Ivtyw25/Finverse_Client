@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { data, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTypingSpeed } from '../context/TypingSpeedContext';
 import { useMouseSpeed } from '../context/MouseActivityContext';
@@ -15,10 +15,9 @@ type TransferFormData = {
 
 export default function TransferPage() {
   const navigate = useNavigate();
-  const{ endSession,loginHour, loginDay, session_seconds} = useAuth();
+  const{ endSession,loginDay, session_seconds} = useAuth();
   const { recordKeystroke, startTracking, stopTracking, averageCPM } = useTypingSpeed();
   const { averageSpeed } = useMouseSpeed();
-  const [riskLevel, setRiskLevel] = useState<string | null>(null);
   const [showDialog, setShowDialog] = useState(false);
 
   useEffect(() => {
@@ -85,7 +84,6 @@ export default function TransferPage() {
       console.log(result.results)
 
       if (prediction?.risk_level === "High") {
-        setRiskLevel("High");
         setShowDialog(true);
       }
       const emailData = {

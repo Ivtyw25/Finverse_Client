@@ -1,9 +1,8 @@
-import React from 'react';
 import { Bell, Settings, LogOut } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export default function Header() {
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
 
   return (
     <div className="bg-white border-b border-slate-200 px-6 py-4">

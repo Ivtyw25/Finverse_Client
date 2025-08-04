@@ -1,5 +1,5 @@
 import React, { useState, useEffect} from 'react';
-import { Eye, EyeOff, Lock, Mail, User, Shield, AlertCircle } from 'lucide-react';
+import { Eye, EyeOff, Lock, User, Shield, AlertCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTypingSpeed } from '../context/TypingSpeedContext';
 
@@ -15,7 +15,7 @@ interface FormErrors {
 
 export default function LoginForm() {
 
-  const { recordKeystroke, startTracking, stopTracking, averageCPM } = useTypingSpeed();
+  const { recordKeystroke, startTracking, stopTracking} = useTypingSpeed();
 
   useEffect(() => {
     startTracking();

@@ -1,4 +1,3 @@
-import React from 'react';
 import { CreditCard, PiggyBank, Wallet } from 'lucide-react';
 import type { Account } from '../types/index';
 
